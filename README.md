@@ -1,7 +1,7 @@
 dnode-ez
 ========
 
-DNode-ez makes Dnode even easier!
+DNode-ez makes [Dnode](https://github.com/substack/dnode) even easier!
 
 The server:
 	
