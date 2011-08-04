@@ -19,9 +19,12 @@ var ez = function() {
 				subscriptionsById[conn.id] = [];
 			if (subscriptionsByName[id] === undefined)
 				subscriptionsByName[id] = [];
+			var emitterPotemkin = {
+				emit : emitter
+			};
 			var subObj = {
 				id:id,
-				emitter:emitter,
+				emitter:emitterPotemkin,
 				events:Object.keys(emitterObj._events)
 			};
 			console.log(subObj);
