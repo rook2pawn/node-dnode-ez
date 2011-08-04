@@ -3,7 +3,8 @@ var EE = require('events').EventEmitter;
 var ez = function() {
 	var emitter = new EE;
 	var utilEmitter = new EE;
-	var subscriptions = {};
+	var subscriptionsById = {};
+	var subscriptionsByName = {};
 	utilEmitter.on('connectionready',function() {
 		connectionReady = true;
 	});
@@ -14,15 +15,17 @@ var ez = function() {
 		}
 		this.subscribe = function(emitter,id) {
 			console.log("receiving subscription.");
-			if (subscriptions[conn.id] === undefined) 
-				subscriptions[conn.id] = [];
+			if (subscriptionsById[conn.id] === undefined) 
+				subscriptionsById[conn.id] = [];
+			if (subscriptionsByName[id] === undefined)
+				subscriptionsByName[id] = [];
 			var subObj = {
 				id:id,
 				emitter:emitter
 			};
-			subscriptions[conn.id].push(subObj);
-			console.log("Testing subscription, emitting...");
-			emitter('wow');
+			subscriptionsById[conn.id].push(subObj);
+			subscriptionsByName[id].push(subObj);
+			console.log("adding subscription by name " + id);
 		};	
 	};
 	var app = function(remote,conn) {
@@ -53,6 +56,10 @@ var ez = function() {
 		d.listen(address,app);
 		return self;
 	};
+	self.getEmitter = function(name) {
+		return subscriptionsByName[name];
+	};
+			
 	self.emit = function() {
 		var args = [].slice.call(arguments,0);
 		if (connectionReady) {
