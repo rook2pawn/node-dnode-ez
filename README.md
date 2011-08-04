@@ -18,6 +18,7 @@ The client:
 	client.connect(5050);
 	client.emit('foobar','<-- Cool!');
 
+Results in:
 
 	//  on the server
 	> Foobar! <-- Cool!
