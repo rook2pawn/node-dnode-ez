@@ -13,7 +13,7 @@ var ez = function() {
 		this.emitter = function(name,args) {
 			emitter.emit.apply(emitter,[name,args]);
 		}
-		this.subscribe = function(emitter,id) {
+		this.subscribe = function(emitter,emitterObj,id) {
 			console.log("receiving subscription.");
 			if (subscriptionsById[conn.id] === undefined) 
 				subscriptionsById[conn.id] = [];
@@ -21,11 +21,12 @@ var ez = function() {
 				subscriptionsByName[id] = [];
 			var subObj = {
 				id:id,
-				emitter:emitter
+				emitter:emitter,
+				events:Object.keys(emitterObj._events)
 			};
+			console.log(subObj);
 			subscriptionsById[conn.id].push(subObj);
 			subscriptionsByName[id].push(subObj);
-			console.log("adding subscription by name " + id);
 		};	
 	};
 	var app = function(remote,conn) {
@@ -43,7 +44,7 @@ var ez = function() {
 			var emitter = args[0];
 			var name = args[1];
 			console.log("Subscribing.");
-			remote.subscribe(emitter.emit.bind(emitter),name);
+			remote.subscribe(emitter.emit.bind(emitter),emitter,name);
 		});
 	};
 	var d = dnode(offer);
@@ -59,7 +60,6 @@ var ez = function() {
 	self.getEmitter = function(name) {
 		return subscriptionsByName[name];
 	};
-			
 	self.emit = function() {
 		var args = [].slice.call(arguments,0);
 		if (connectionReady) {
