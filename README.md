@@ -19,9 +19,8 @@ Results in:
 	//  on the server
 	> Foobar! <-- Cool!
 
-
-
 Where
+
 	var dnode_ez = require('dnode-ez');
 	var server = dnode_ez();
 	var client = dnode_ez();
