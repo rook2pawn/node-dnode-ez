@@ -18,18 +18,16 @@ var ez = function() {
 			if (subscriptionsById[conn.id] === undefined) 
 				subscriptionsById[conn.id] = [];
 			if (subscriptionsByName[id] === undefined)
-				subscriptionsByName[id] = [];
-			var emitterPotemkin = {
-				emit : emitter
-			};
+				subscriptionsByName[id] = {};
 			var subObj = {
 				id:id,
-				emitter:emitterPotemkin,
-				events:Object.keys(emitterObj._events)
+				emitter:emitter,
+				events:Object.keys(emitterObj._events),
+				emit:emitter
 			};
 			console.log(subObj);
 			subscriptionsById[conn.id].push(subObj);
-			subscriptionsByName[id].push(subObj);
+			subscriptionsByName[id] = subObj;
 		};	
 	};
 	var app = function(remote,conn) {
