@@ -5,7 +5,7 @@ var ez = function() {
 	var utilEmitter = new EE;
 	var subscriptionsById = {};
 	var subscriptionsByName = {};
-	var reservedEvents = ['alertSubscribe'];
+	var reservedEvents = ['bind'];
 	utilEmitter.on('connectionready',function() {
 		connectionReady = true;
 	});
@@ -27,7 +27,7 @@ var ez = function() {
 			};
 			subscriptionsById[conn.id].push(subObj);
 			subscriptionsByName[id] = subObj;
-			utilEmitter.emit('alertSubscribe');
+			utilEmitter.emit('bind');
 		};	
 	};
 	var app = function(remote,conn) {
