@@ -2,7 +2,7 @@
   "author": "David Wee <rook2pawn@gmail.com> (http://rook2pawn.com)",
   "name": "dnode-ez",
   "description": "dnode made even easier!",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "homepage": "https://github.com/rook2pawn/node-dnode-ez",
   "repository": {
     "type": "git",
