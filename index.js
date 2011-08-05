@@ -14,7 +14,6 @@ var ez = function() {
 			emitter.emit.apply(emitter,[name,args]);
 		}
 		this.subscribe = function(emitter,emitterObj,id) {
-			console.log("receiving subscription.");
 			if (subscriptionsById[conn.id] === undefined) 
 				subscriptionsById[conn.id] = [];
 			if (subscriptionsByName[id] === undefined)
@@ -25,9 +24,9 @@ var ez = function() {
 				events:Object.keys(emitterObj._events),
 				emit:emitter
 			};
-			console.log(subObj);
 			subscriptionsById[conn.id].push(subObj);
 			subscriptionsByName[id] = subObj;
+			utilEmitter.emit('alertSubscribe');
 		};	
 	};
 	var app = function(remote,conn) {
@@ -44,7 +43,6 @@ var ez = function() {
 			var args = [].slice.call(arguments,0);
 			var emitter = args[0];
 			var name = args[1];
-			console.log("Subscribing.");
 			remote.subscribe(emitter.emit.bind(emitter),emitter,name);
 		});
 	};
@@ -59,7 +57,8 @@ var ez = function() {
 		return self;
 	};
 	self.getEmitter = function(name) {
-		return subscriptionsByName[name];
+		if (subscriptionsByName[name] !== undefined)
+			return subscriptionsByName[name];
 	};
 	self.emit = function() {
 		var args = [].slice.call(arguments,0);
@@ -85,6 +84,9 @@ var ez = function() {
 	};
 	self.on = function(name, fn) {
 		emitter.on(name,fn);
+	};
+	self.utilEmitter = function() {
+		return utilEmitter;
 	};
 	return self;
 };
