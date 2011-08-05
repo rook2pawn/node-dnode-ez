@@ -1,9 +1,0 @@
-var emitter = new EE;
-emitter.on('wow,function(){console.log("yay")});
-client.connect(5050); 
-
-client.bind(emitter,'cl_emitter');
-....
-
-server.cl_emitter.emit('wow');
-

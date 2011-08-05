@@ -40,8 +40,10 @@ Suppose in the client:
 
 Now, on the server:
 
-	var clientEmitter = server.getEmitter('justAnotherEmitter');
-	clientEmitter.emit('wow',' so cool!');
+	server.on('alertSubscribe',function() {
+		var clientEmitter = server.getEmitter('justAnotherEmitter');
+		clientEmitter.emit('wow',' so cool!');
+	}
 
 Results on the client:
 
