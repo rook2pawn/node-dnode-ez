@@ -40,7 +40,7 @@ Suppose in the client:
 
 Now, on the server:
 
-	server.on('alertSubscribe',function() {
+	server.on('bind',function() {
 		var clientEmitter = server.getEmitter('justAnotherEmitter');
 		clientEmitter.emit('wow',' so cool!');
 	}
