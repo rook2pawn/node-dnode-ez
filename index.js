@@ -5,6 +5,7 @@ var ez = function() {
 	var utilEmitter = new EE;
 	var subscriptionsById = {};
 	var subscriptionsByName = {};
+	var reservedEvents = ['alertSubscribe'];
 	utilEmitter.on('connectionready',function() {
 		connectionReady = true;
 	});
@@ -83,7 +84,14 @@ var ez = function() {
 		return self;
 	};
 	self.on = function(name, fn) {
-		emitter.on(name,fn);
+		console.log("on being invoked with name:" + name);
+		if (reservedEvents.indexOf(name) == -1) {
+			console.log("Adding onto emitter");
+			emitter.on(name,fn);
+		} else {
+			console.log("Adding onto utilEmitter");
+			utilEmitter.on(name,fn);
+		}
 	};
 	self.utilEmitter = function() {
 		return utilEmitter;
