@@ -52,5 +52,6 @@ Results on the client:
 What am i seeing?
 =================
 
-The first example shows triggering an event remotely (where that event is hosted remotely as well)
+The first example shows triggering an event remotely (where that event is hosted remotely as well).
+
 The second example shows an event being triggered locally, from a remote source.
