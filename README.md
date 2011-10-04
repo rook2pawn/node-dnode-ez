@@ -55,3 +55,11 @@ What am i seeing?
 The first example shows triggering an event remotely (where that event is hosted remotely as well).
 
 The second example shows an event being triggered locally, from a remote source.
+
+Extra useful stuff
+==================
+
+    client.on / server.on('connect',function(remote) {});
+
+Connect is a reserved keyword in dnode-ez and will trigger on a connection with remote being passed.
+

@@ -5,7 +5,7 @@ var ez = function() {
 	var utilEmitter = new EE;
 	var subscriptionsById = {};
 	var subscriptionsByName = {};
-	var reservedEvents = ['bind'];
+	var reservedEvents = ['bind','connect'];
 	utilEmitter.on('connectionready',function() {
 		connectionReady = true;
 	});
@@ -33,6 +33,7 @@ var ez = function() {
 	var app = function(remote,conn) {
 		conn.on('ready',function() {
 			utilEmitter.emit('connectionready');
+            utilEmitter.emit('connect');
 		});
 		utilEmitter.on('emit',function() {
 			var args = [].slice.call(arguments,0);
@@ -46,6 +47,9 @@ var ez = function() {
 			var name = args[1];
 			remote.subscribe(emitter.emit.bind(emitter),emitter,name);
 		});
+        utilEmitter.on('connect',function() {
+            //anything bookeepingish here  
+        });
 	};
 	var d = dnode(offer);
 	var self = {};
