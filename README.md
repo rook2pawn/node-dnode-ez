@@ -63,3 +63,10 @@ Extra useful stuff
 
 Connect is a reserved keyword in dnode-ez and will trigger on a connection with remote being passed.
 
+    dnode_ez({
+        name:'scooby',
+        profession:'snacker'
+    })
+
+You can specify an object at construction and its members will be automagically rolled into the remote object that is offered to other connections.
+

@@ -1,6 +1,6 @@
 var dnode = require('dnode');
 var EE = require('events').EventEmitter;
-var ez = function() {
+var ez = function(obj) {
 	var emitter = new EE;
 	var utilEmitter = new EE;
 	var subscriptionsById = {};
@@ -11,6 +11,14 @@ var ez = function() {
 	});
 	var connectionReady = false;
 	var offer = function(remote,conn) {
+        if (obj !== undefined) {
+            var name = undefined;
+            for (name in obj) {
+                if (obj.hasOwnProperty(name)) {
+                    this[name] = obj[name];
+                }
+            }
+        }
 		this.emitter = function(name,args) {
 			emitter.emit.apply(emitter,[name,args]);
 		}
