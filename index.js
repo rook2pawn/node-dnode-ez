@@ -33,7 +33,7 @@ var ez = function() {
 	var app = function(remote,conn) {
 		conn.on('ready',function() {
 			utilEmitter.emit('connectionready');
-            utilEmitter.emit('connect');
+            utilEmitter.emit('connect',remote);
 		});
 		utilEmitter.on('emit',function() {
 			var args = [].slice.call(arguments,0);
