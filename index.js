@@ -5,11 +5,16 @@ var ez = function(obj) {
 	var utilEmitter = new EE;
 	var subscriptionsById = {};
 	var subscriptionsByName = {};
-	var reservedEvents = ['bind','connect'];
+	var reservedEvents = ['bind','connect','end','incomingBinds'];
 	utilEmitter.on('connectionready',function() {
 		connectionReady = true;
 	});
 	var connectionReady = false;
+
+    var expectedBinds = [];
+    var bindsMade = 0;
+    var clients = {};
+
 	var offer = function(remote,conn) {
         if (obj !== undefined) {
             var name = undefined;
@@ -20,11 +25,11 @@ var ez = function(obj) {
             }
         }
 		this.emitter = function(name,args) {
-			emitter.emit.apply(emitter,[name,args]);
+			emitter.emit.apply(emitter,[name,args,remote,conn]);
 		}
 		this.subscribe = function(emitter,emitterObj,id) {
 			if (subscriptionsById[conn.id] === undefined) 
-				subscriptionsById[conn.id] = [];
+				subscriptionsById[conn.id] = {};
 			if (subscriptionsByName[id] === undefined)
 				subscriptionsByName[id] = {};
 			var subObj = {
@@ -33,16 +38,25 @@ var ez = function(obj) {
 				events:Object.keys(emitterObj._events),
 				emit:emitter
 			};
-			subscriptionsById[conn.id].push(subObj);
+			subscriptionsById[conn.id] = subObj;
 			subscriptionsByName[id] = subObj;
-			utilEmitter.emit('bind');
+			utilEmitter.emit('bind',id,remote,conn);
 		};	
+        this.expectedBinds = function(binds) {
+            clients[conn.id].expectedBinds = binds;
+            clients[conn.id].bindsMade = 0;
+        };
 	};
 	var app = function(remote,conn) {
 		conn.on('ready',function() {
+            console.log("Connection from " + conn.id + " established.");
 			utilEmitter.emit('connectionready');
-            utilEmitter.emit('connect',remote);
+            utilEmitter.emit('connect',remote,conn);
 		});
+        conn.on('end',function() {
+            console.log("Connection from " + conn.id + " closed.");
+            utilEmitter.emit('end',remote,conn);
+        });
 		utilEmitter.on('emit',function() {
 			var args = [].slice.call(arguments,0);
 			var name = args[0];
@@ -57,6 +71,7 @@ var ez = function(obj) {
 		});
         utilEmitter.on('connect',function() {
             //anything bookeepingish here  
+            clients[conn.id] = {};
         });
 	};
 	var d = dnode(offer);
@@ -69,6 +84,11 @@ var ez = function(obj) {
 		d.listen(address,app);
 		return self;
 	};
+    self.getEmitterByConnId = function(id,name) {
+        if (subscriptionsById[id] !== undefined) {
+            return subscriptionsById[id];
+        };
+    };
 	self.getEmitter = function(name) {
 		if (subscriptionsByName[name] !== undefined)
 			return subscriptionsByName[name];
@@ -86,13 +106,17 @@ var ez = function(obj) {
 		return self;
 	}
 	self.bind = function(emitter,name) {
-		if (connectionReady) {
-			utilEmitter.emit('subscribe', emitter,name);
-		} else {
-			setTimeout(function() {
-				self.bind.apply(self.bind,[emitter,name]);
-			}, 250);
-		} 
+		var args = [].slice.call(arguments,0);
+        args.shift();
+        args.forEach(function(name) {
+            if (connectionReady) {
+                utilEmitter.emit('subscribe', emitter,name);
+            } else {
+                setTimeout(function() {
+                    self.bind.apply(self.bind,[emitter,name]);
+                }, 250);
+            } 
+        });
 		return self;
 	};
 	self.on = function(name, fn) {
