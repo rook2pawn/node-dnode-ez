@@ -1,4 +1,5 @@
 var dnode = require('dnode');
+var protocol = require('dnode-protocol');
 var EE = require('events').EventEmitter;
 var ez = function(obj) {
 	var emitter = new EE;
@@ -49,12 +50,12 @@ var ez = function(obj) {
 	};
 	var app = function(remote,conn) {
 		conn.on('ready',function() {
-            console.log("Connection from " + conn.id + " established.");
+            //console.log("Connection from " + conn.id + " established.");
 			utilEmitter.emit('connectionready');
             utilEmitter.emit('connect',remote,conn);
 		});
         conn.on('end',function() {
-            console.log("Connection from " + conn.id + " closed.");
+            //console.log("Connection from " + conn.id + " closed.");
             utilEmitter.emit('end',remote,conn);
         });
 		utilEmitter.on('emit',function() {
@@ -77,12 +78,13 @@ var ez = function(obj) {
 	var d = dnode(offer);
 	var self = {};
 	self.connect = function(address) {
-		d.connect(address,app);
+        d.connect(address,app);
 		return self;
 	};
 	self.listen = function(address) {
-		d.listen(address,app);
-		return self;
+        var params = protocol.parseArgs(arguments);
+        params.block = app;
+        return d.listen(params);
 	};
     self.getEmitterByConnId = function(id,name) {
         if (subscriptionsById[id] !== undefined) {

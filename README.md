@@ -58,12 +58,27 @@ The first example shows triggering an event remotely (where that event is hosted
 The second example shows an event being triggered locally, from a remote source.
 
 
-Extra useful stuff
-==================
+Out of the Box Events
+=====================
 
-    client.on / server.on('connect',function(remote) {});
+There are a number of additional useful events that occur without you having to specify them:
 
-Connect is a reserved keyword in dnode-ez and will trigger on a connection with remote being passed.
+connect
+-------
+
+    client.on / server.on('connect',function(remote,conn) {});
+
+connect is a reserved keyword in dnode-ez and will trigger on a connection with remote being passed.
+
+end
+---
+    
+    client.on / server.on('end',function(remote,conn) {});
+
+end is also a reserved keyword in dnode-ez and will trigger on a closed connection with the relevant remote being passed.
+
+Construction Time
+=================
 
     dnode_ez({
         name:'scooby',
@@ -71,6 +86,10 @@ Connect is a reserved keyword in dnode-ez and will trigger on a connection with 
     })
 
 You can specify an object at construction and its members will be automagically rolled into the remote object that is offered to other connections.
+
+
+Two Bonus Arguments Sent to All Event Listeners
+===============================================
 
 Consider again the first example:
  
@@ -92,4 +111,14 @@ as defined in Dnode. Thus we could rewrite as such:
     var baz = function(val, remote, conn) {
         console.log(conn.id + " said Foobar! " + val);
     };
+
+Use Dnode-EZ with Connect / Express / HTTP
+==========================================
+
+Now, Dnode-EZ uses a webserver the same way Dnode does.
+    
+    // our webserver
+    var server = connect.CreateServer();
+
+    var ez = dnode_ez.listen(server);
 
