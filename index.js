@@ -62,7 +62,7 @@ var ez = function(obj) {
 			var args = [].slice.call(arguments,0);
 			var name = args[0];
 			var rest = args.slice(1);
-			remote.emitter(name, rest);
+			remote.emitter(name, rest.pop());
 		});
 		utilEmitter.on('subscribe',function() {
 			var args = [].slice.call(arguments,0);
