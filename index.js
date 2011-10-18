@@ -25,8 +25,11 @@ var ez = function(obj) {
                 }
             }
         }
-		this.emitter = function(name,args) {
-			emitter.emit.apply(emitter,[name,args,remote,conn]);
+		this.emitter = function() {
+			var args = [].slice.call(arguments,0);
+            args.push(remote);
+            args.push(conn);
+			emitter.emit.apply(emitter,args);
 		}
 		this.subscribe = function(emitter,emitterObj,id) {
 			if (subscriptionsById[conn.id] === undefined) 
@@ -60,9 +63,7 @@ var ez = function(obj) {
         });
 		utilEmitter.on('emit',function() {
 			var args = [].slice.call(arguments,0);
-			var name = args[0];
-			var rest = args.slice(1);
-			remote.emitter(name, rest.pop());
+			remote.emitter.apply(remote.emitter,args);
 		});
 		utilEmitter.on('subscribe',function() {
 			var args = [].slice.call(arguments,0);
