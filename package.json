@@ -4,6 +4,16 @@
   "description": "dnode made even easier!",
   "version": "0.0.7",
   "homepage": "https://github.com/rook2pawn/node-dnode-ez",
+  "keywords" : [
+    "message passing",
+    "rpc",
+    "rmi",
+    "drb",
+    "remote",
+    "communication",
+    "websockets",
+    "socket.io"
+   ],
   "repository": {
     "type": "git",
     "url": "git://github.com/rook2pawn/node-dnode-ez.git"
