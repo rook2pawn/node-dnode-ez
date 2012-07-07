@@ -24,7 +24,7 @@ console.log("Press b to emit cool on client emitter 2");
 console.log("Press c to emit foobar on server emitter 1");
 var tty = require('tty');
 process.stdin.resume();
-tty.setRawMode(true);
+process.stdin.setRawMode(true);
 process.stdin.on('keypress', function(char, key) {
     if (key && key.ctrl && key.name == 'c') {
         console.log('graceful exit');

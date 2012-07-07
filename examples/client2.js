@@ -12,7 +12,7 @@ client.bind(emitter2,'woohoo');
 console.log("Press c to emit foobar on server emitter 1");
 var tty = require('tty');
 process.stdin.resume();
-tty.setRawMode(true);
+process.stdin.setRawMode(true);
 process.stdin.on('keypress', function(char, key) {
     if (key && key.ctrl && key.name == 'c') {
         console.log('graceful exit');
