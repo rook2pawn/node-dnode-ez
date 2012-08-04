@@ -83,9 +83,10 @@ var ez = function(obj) {
 		return self;
 	};
 	self.listen = function(address) {
-        var params = protocol.parseArgs(arguments);
-        params.block = app;
-        return d.listen(params);
+        //var params = protocol.parseArgs(arguments);
+        //params.block = app;
+        //return d.listen(params);
+        return d.listen(address);
 	};
     self.getEmitterByConnId = function(id,name) {
         if (subscriptionsById[id] !== undefined) {

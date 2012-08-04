@@ -122,3 +122,7 @@ Now, Dnode-EZ uses a webserver the same way Dnode does.
 
     var ez = dnode_ez.listen(server);
 
+Changelog
+=========
+
+v.0.0.9 - adapated for the latest change in Dnode 1.0.1
