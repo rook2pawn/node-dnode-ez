@@ -15,6 +15,7 @@ var ez = function(obj) {
 
     var expectedBinds = [];
     var bindsMade = 0;
+    var serverEvents = undefined;
     var clients = {};
 
 	var offer = function(remote,conn) {
@@ -54,7 +55,8 @@ var ez = function(obj) {
 	};
 	var app = function(remote,conn) {
 		conn.on('ready',function() {
-            console.log("Connection from " + conn.id + " established.");
+            console.log("App conn ready!!!");
+            console.log(conn.id);
 			utilEmitter.emit('connectionready');
             utilEmitter.emit('connect',remote,conn);
 		});
@@ -85,7 +87,10 @@ var ez = function(obj) {
 	};
 	self.listen = function() {
         var params = parseArgs(arguments);
-        return d.listen(params);
+        serverEvents = d.listen(params);
+        serverEvents.on('remote',function(remote,conn) {
+            utilEmitter.emit('connect',remote,conn);    
+        });
 	};
     self.getEmitterByConnId = function(id,name) {
         if (subscriptionsById[id] !== undefined) {

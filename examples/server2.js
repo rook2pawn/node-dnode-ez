@@ -1,27 +1,16 @@
 var dnode_ez = require('../index');
 var server = dnode_ez();
-server.on('foobar',function(val) {console.log("Server foobar! "+val);});
-var serverEvents = server.listen(5050);
-serverEvents.on('remote',function(remote,conn) {
-    console.log(conn.id);
+var clientEvents = {};
+server.on('foobar',function(val,remote,conn) {
+    console.log("Server foobar! "+val); console.log("Brought to you by " + conn.id);
 });
-var foo = undefined;
-var bar = undefined;
+server.on('connect',function(remote,conn) {
+    // conn.id is unique per different connecting client
+});
+server.listen(5050);
 server.on('bind',function(id) {
-	var emitterOnClient = server.getEmitter(id);
-    switch (emitterOnClient.id) {
-        case 'justAnotherEmitter' : emitterOnClient.emit('wow');
-                foo = emitterOnClient;
-                break;
-        case 'woohoo' : emitterOnClient.emit('cool');
-                bar = emitterOnClient;
-                break;
-        default :
-                break;
-    }
+	clientEvents[id] = server.getEmitter(id);
 });
-
-
 console.log("Press a to emit wow on client emitter 1");
 console.log("Press b to emit cool on client emitter 2");
 console.log("Press c to emit foobar on server emitter 1");
@@ -36,10 +25,10 @@ process.stdin.on('data', function(char) {
     console.log("You entered -> " + char);
     switch (char) {
         case 'a' : 
-                foo.emit('wow','The First Argument');
+                clientEvents['emitterNumber1'].emit('wow','The First Argument');
                 break;
         case 'b' :
-                bar.emit('cool','iseewhatyoudidthere');
+                clientEvents['emitterNumber2'].emit('cool','iseewhatyoudidthere');
                 break;
         default :
                 break;

@@ -5,13 +5,14 @@ emitter.on('wow',function(arg1) {console.log("Wow. Just wow."); console.log("Arg
 var emitter2 = new EE;
 emitter2.on('cool',function(arg1) {console.log("Super cool."); console.log("Arg1: " + arg1)});
 var client = dnode_ez();
-client.on('connect',function() {
-    // connect here 
+client.on('connect',function(remote,conn) {
+    // the conn.id here is less relevant than the server2.js conn.id 
+    // however you can put any on connect code here.
 });
 client.connect(5050);
-client.bind(emitter,'justAnotherEmitter');
+client.bind(emitter,'emitterNumber1');
 client.emit('foobar',' <-- nice!');
-client.bind(emitter2,'woohoo');
+client.bind(emitter2,'emitterNumber2');
 console.log("Press c to emit foobar on server emitter 1");
 process.stdin.resume();
 process.stdin.setRawMode(true);
