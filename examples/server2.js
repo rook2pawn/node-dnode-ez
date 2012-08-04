@@ -1,7 +1,10 @@
 var dnode_ez = require('../index');
 var server = dnode_ez();
 server.on('foobar',function(val) {console.log("Server foobar! "+val);});
-server.listen(5050);
+var serverEvents = server.listen(5050);
+serverEvents.on('remote',function(remote,conn) {
+    console.log(conn.id);
+});
 var foo = undefined;
 var bar = undefined;
 server.on('bind',function(id) {
@@ -22,17 +25,16 @@ server.on('bind',function(id) {
 console.log("Press a to emit wow on client emitter 1");
 console.log("Press b to emit cool on client emitter 2");
 console.log("Press c to emit foobar on server emitter 1");
-var tty = require('tty');
-process.stdin.resume();
-tty.setRawMode(true);
-process.stdin.on('keypress', function(char, key) {
-    if (key && key.ctrl && key.name == 'c') {
+process.stdin.resume(); 
+process.stdin.setEncoding('utf8'); 
+process.stdin.setRawMode(true); 
+process.stdin.on('data', function(char) {
+    if (char == '\3') {
         console.log('graceful exit');
         process.exit()
     }
-    if (key !== undefined) {
-        console.log("You entered -> " + key.name);
-        switch (key.name) {
+    console.log("You entered -> " + char);
+    switch (char) {
         case 'a' : 
                 foo.emit('wow','The First Argument');
                 break;
@@ -41,6 +43,5 @@ process.stdin.on('keypress', function(char, key) {
                 break;
         default :
                 break;
-        }
-    } 
+    }
 });
