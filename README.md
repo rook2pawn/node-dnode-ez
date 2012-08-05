@@ -50,6 +50,20 @@ Advanced
 Browser
 =======
 
+To run it in the browser, simply take this
+
+    // client.js
+    var ez = require('dnode-ez');
+    var d = ez();
+    d.on('welcome',function(msg) {
+        alert("Welcome! The server brings you this message: " + msg);
+    });
+    d.connectWEB();
+
+and run "browserify client.js -o bundle.js" to compile the browser side js. To install browserify, simply npm install -g browserify (-g for global)
+
+Then we can run a server like this
+
     // server.js
     var ez = require('dnode-ez');
     var http = require('http');
@@ -64,13 +78,4 @@ Browser
     d.on('end',function() {
         console.log("A client has disconnected.");
     });
-
-
-    // client.js
-    var ez = require('dnode-ez');
-    var d = ez();
-    d.on('welcome',function(msg) {
-        alert("Welcome! The server brings you this message: " + msg);
-    });
-    d.connectWEB();
 
