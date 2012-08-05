@@ -2,7 +2,7 @@ var dnode_ez = require('../index');
 var server = dnode_ez();
 var clientEvents = {};
 server.on('foobar',function(val,remote,conn) {
-    console.log("Server foobar! "+val); console.log("Brought to you by " + conn.id);
+    console.log(val); 
 });
 server.on('connect',function(remote,conn) {
     // conn.id is unique per different connecting client

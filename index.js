@@ -1,5 +1,5 @@
 var dnode = require('dnode');
-var protocol = require('dnode-protocol');
+var shoe = require('shoe');
 var parseArgs = require('./node_modules/dnode/lib/parse_args');
 var EE = require('events').EventEmitter;
 var ez = function(obj) {
@@ -52,16 +52,10 @@ var ez = function(obj) {
             clients[conn.id].expectedBinds = binds;
             clients[conn.id].bindsMade = 0;
         };
-	};
-	var app = function(remote,conn) {
 		conn.on('ready',function() {
-            console.log("App conn ready!!!");
-            console.log(conn.id);
 			utilEmitter.emit('connectionready');
-            utilEmitter.emit('connect',remote,conn);
 		});
         conn.on('end',function() {
-            console.log("Connection from " + conn.id + " closed.");
             utilEmitter.emit('end',remote,conn);
         });
 		utilEmitter.on('emit',function() {
@@ -79,18 +73,40 @@ var ez = function(obj) {
             clients[conn.id] = {};
         });
 	};
-	var d = dnode(offer);
 	var self = {};
 	self.connect = function(address) {
-        d.connect(address,app);
-		return self;
+        var d = dnode(offer);
+        d.connect(address);
 	};
-	self.listen = function() {
+    self.connectWEB = function() {
+        var stream = shoe('/dnode');
+        var d = dnode(offer);
+        serverEvents = d.pipe(stream).pipe(d); 
+        serverEvents.on('remote',function(remote,conn) {
+            utilEmitter.emit('connectionready');
+            utilEmitter.emit('connect',remote,conn);    
+        });
+    };
+	self.listen = function(address) {
+        var d = dnode(offer);
         var params = parseArgs(arguments);
         serverEvents = d.listen(params);
         serverEvents.on('remote',function(remote,conn) {
+            utilEmitter.emit('connectionready');
             utilEmitter.emit('connect',remote,conn);    
         });
+	};
+	self.listenWEB = function(address,server) {
+        server.listen(address);
+        var sock = shoe(function (stream) {
+            var d = dnode(offer);
+            serverEvents = d.pipe(stream).pipe(d);
+            serverEvents.on('remote',function(remote,conn) {
+			    utilEmitter.emit('connectionready');
+                utilEmitter.emit('connect',remote,conn);    
+            });
+        });
+        sock.install(server, '/dnode');
 	};
     self.getEmitterByConnId = function(id,name) {
         if (subscriptionsById[id] !== undefined) {

@@ -1,22 +1,8 @@
 <html>
 <head>
-<script src='es5-shim.min.js' type='text/javascript'></script>
-<script src='/browserify.js' type='text/javascript'></script>
-<script type='text/javascript' type='text/javascript'>
-    var ez = require('dnode-ez');
-    var EE = require('events').EventEmitter;
-    var client = ez();
-    var emitter = new EE;
-    emitter.on('acknowledge',function(msg) {
-        alert("Server acknowledged emitter!!\n"+msg);
-    });
-    window.onload = function() {
-        client.connect(5000);
-        client.emit('omg','wow!!');
-        client.bind(emitter,'acknowledge');
-    };
-</script> 
+    <title>Dnode-ez test with shoe</title>
+</head>
 <body>
-    Hi!
+    Dtest.
+    <script type='text/javascript' src='/bundle.js'></script>
 </body>
-</html>

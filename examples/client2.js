@@ -1,9 +1,9 @@
 var dnode_ez = require('../index');
 var EE = require('events').EventEmitter;
 var emitter = new EE;
-emitter.on('wow',function(arg1) {console.log("Wow. Just wow."); console.log("Arg1: " + arg1)});
+emitter.on('wow',function(arg1) {console.log("emitter1: Arg1: " + arg1)});
 var emitter2 = new EE;
-emitter2.on('cool',function(arg1) {console.log("Super cool."); console.log("Arg1: " + arg1)});
+emitter2.on('cool',function(arg1) {console.log("emitter2: Arg1: " + arg1)});
 var client = dnode_ez();
 client.on('connect',function(remote,conn) {
     // the conn.id here is less relevant than the server2.js conn.id 
@@ -11,7 +11,7 @@ client.on('connect',function(remote,conn) {
 });
 client.connect(5050);
 client.bind(emitter,'emitterNumber1');
-client.emit('foobar',' <-- nice!');
+client.emit('foobar','from the client.. hello!');
 client.bind(emitter2,'emitterNumber2');
 console.log("Press c to emit foobar on server emitter 1");
 process.stdin.resume();
