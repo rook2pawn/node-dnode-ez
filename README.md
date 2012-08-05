@@ -30,3 +30,19 @@ Simple
 Advanced
 ========
 
+    // server.js
+    var ee = require('events').EventEmitter;
+    var notifications = new ee;
+    server.on('bind',function(id) {
+        clients[id] = {};
+        clients[id] = server.getEmitter(id);
+        // we can emit from clients[id].emit('whatever', args)
+    }); 
+
+    // client.js
+    var ee = require('events').EventEmitter;
+    var notifications = new ee;
+    var client = ez();
+    notifications.on('newMessage',function(msg) {
+    });
+    client.bind(notifications,'notifications');
