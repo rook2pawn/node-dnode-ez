@@ -32,11 +32,11 @@ Advanced
 
     // server.js
     var ee = require('events').EventEmitter;
-    var notifications = new ee;
+    var clientEvent;
     server.on('bind',function(id) {
-        clients[id] = {};
-        clients[id] = server.getEmitter(id);
-        // we can emit from clients[id].emit('whatever', args)
+        clientEvent = server.getEmitter(id);
+        // we can now emit from clientEvent
+        // i.e clientEvent.emit('newMessage','you have mail!');
     }); 
 
     // client.js
@@ -46,3 +46,32 @@ Advanced
     notifications.on('newMessage',function(msg) {
     });
     client.bind(notifications,'notifications');
+
+WEB
+===
+
+    // server.js
+    var ez = require('dnode-ez');
+    var http = require('http');
+    var ecstatic = require('ecstatic')(__dirname);
+    var server = http.createServer(ecstatic);
+    var d = ez();
+    d.listenWEB(8500,server);
+    d.on('connect', function() {
+        console.log("A client has connected.");
+        d.emit('welcome','Greetings coder!!');
+    });
+    d.on('end',function() {
+        console.log("A client has disconnected.");
+    });
+
+
+    // the client
+    // entry.js -> browserify entry.js -o bundle.js
+    var ez = require('dnode-ez');
+    var d = ez();
+    d.on('welcome',function(msg) {
+        alert("Welcome! The server brings you this message: " + msg);
+    });
+    d.connectWEB();
+
