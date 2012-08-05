@@ -47,8 +47,8 @@ Advanced
     });
     client.bind(notifications,'notifications');
 
-WEB
-===
+Browser
+=======
 
     // server.js
     var ez = require('dnode-ez');
@@ -66,8 +66,7 @@ WEB
     });
 
 
-    // the client
-    // entry.js -> browserify entry.js -o bundle.js
+    // client.js
     var ez = require('dnode-ez');
     var d = ez();
     d.on('welcome',function(msg) {
