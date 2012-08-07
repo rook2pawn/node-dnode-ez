@@ -79,3 +79,7 @@ Then we can run a server like this
         console.log("A client has disconnected.");
     });
 
+Tests
+=====
+ 
+This module's tests are written for node-TAP.

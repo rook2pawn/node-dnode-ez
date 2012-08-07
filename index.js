@@ -3,15 +3,30 @@ var shoe = require('shoe');
 var parseArgs = require('./node_modules/dnode/lib/parse_args');
 var EE = require('events').EventEmitter;
 var ez = function(obj) {
-	var emitter = new EE;
-	var utilEmitter = new EE;
-	var subscriptionsById = {};
-	var subscriptionsByName = {};
-	var reservedEvents = ['bind','connect','end','incomingBinds'];
-	utilEmitter.on('connectionready',function() {
-		connectionReady = true;
-	});
-	var connectionReady = false;
+    var emitter = new EE;
+    var utilEmitter = new EE;
+    utilEmitter.on('emit',function() {
+        var args = [].slice.call(arguments,0);
+        remote.emitter.apply(remote.emitter,args);
+    });
+    utilEmitter.on('subscribe',function() {
+        var args = [].slice.call(arguments,0);
+        var emitter = args[0];
+        var name = args[1];
+        remote.subscribe(emitter.emit.bind(emitter),emitter,name);
+    });
+    utilEmitter.on('connect',function(remote,conn) {
+        //anything bookeepingish here  
+        //console.log("connid connect:" + conn.id);
+        clients[conn.id] = conn;
+    });
+    var subscriptionsById = {};
+    var subscriptionsByName = {};
+    var reservedEvents = ['bind','connect','end','incomingBinds'];
+    utilEmitter.on('connectionready',function(conn) {
+        connectionReady = true;
+    });
+    var connectionReady = false;
 
     var expectedBinds = [];
     var bindsMade = 0;
@@ -53,34 +68,21 @@ var ez = function(obj) {
             clients[conn.id].bindsMade = 0;
         };
 		conn.on('ready',function() {
-			utilEmitter.emit('connectionready');
+			utilEmitter.emit('connectionready',conn);
 		});
         conn.on('end',function() {
+            //console.log("END!" + conn.id);
             utilEmitter.emit('end',remote,conn);
         });
-		utilEmitter.on('emit',function() {
-			var args = [].slice.call(arguments,0);
-			remote.emitter.apply(remote.emitter,args);
-		});
-		utilEmitter.on('subscribe',function() {
-			var args = [].slice.call(arguments,0);
-			var emitter = args[0];
-			var name = args[1];
-			remote.subscribe(emitter.emit.bind(emitter),emitter,name);
-		});
-        utilEmitter.on('connect',function() {
-            //anything bookeepingish here  
-            clients[conn.id] = {};
-        });
 	};
+    var d = dnode(offer);
 	var self = {};
 	self.connect = function(address) {
-        var d = dnode(offer);
-        d.connect(address);
+        console.log("self.connect to " + address);
+        serverEvents = d.connect(address);
 	};
     self.connectWEB = function() {
         var stream = shoe('/dnode');
-        var d = dnode(offer);
         serverEvents = d.pipe(stream).pipe(d); 
         serverEvents.on('remote',function(remote,conn) {
             utilEmitter.emit('connectionready');
@@ -88,7 +90,6 @@ var ez = function(obj) {
         });
     };
 	self.listen = function(address) {
-        var d = dnode(offer);
         var params = parseArgs(arguments);
         serverEvents = d.listen(params);
         serverEvents.on('remote',function(remote,conn) {
@@ -99,10 +100,9 @@ var ez = function(obj) {
 	self.listenWEB = function(address,server) {
         server.listen(address);
         var sock = shoe(function (stream) {
-            var d = dnode(offer);
             serverEvents = d.pipe(stream).pipe(d);
             serverEvents.on('remote',function(remote,conn) {
-			    utilEmitter.emit('connectionready');
+                utilEmitter.emit('connectionready');
                 utilEmitter.emit('connect',remote,conn);    
             });
         });
@@ -130,7 +130,7 @@ var ez = function(obj) {
 		return self;
 	}
 	self.bind = function(emitter,name) {
-		var args = [].slice.call(arguments,0);
+		var args = [].slice.call(arguments,0); 
         args.shift();
         args.forEach(function(name) {
             if (connectionReady) {
@@ -153,6 +153,12 @@ var ez = function(obj) {
 	self.utilEmitter = function() {
 		return utilEmitter;
 	};
+    self.close = function() {
+        serverEvents.close();
+        Object.keys(clients).forEach(function(key) {
+            clients[key].end();
+        });
+    };    
 	return self;
 };
 exports = module.exports = ez;
