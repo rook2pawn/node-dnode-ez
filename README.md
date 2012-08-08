@@ -75,8 +75,6 @@ Also for the web code, put your code into some file, say, entry.js, and run
 
     browserify entry.js -o bundle.js
 
-
-
 Tests
 =====
  
