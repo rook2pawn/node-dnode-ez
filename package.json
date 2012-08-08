@@ -2,7 +2,7 @@
   "author": "David Wee <rook2pawn@gmail.com> (http://rook2pawn.com)",
   "name": "dnode-ez",
   "description": "dnode made even easier!",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "homepage": "https://github.com/rook2pawn/node-dnode-ez",
   "keywords" : [
     "message passing",
@@ -20,8 +20,8 @@
   },
   "main": "index.js",
   "dependencies": {
-	"dnode" : "",
-    "shoe" : "",
+	"dnode" : "1.0.1",
+    "shoe" : "0.0.3",
     "ecstatic" : ""
   },
   "devDependencies": {}

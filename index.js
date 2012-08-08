@@ -71,14 +71,12 @@ var ez = function(obj) {
 			utilEmitter.emit('connectionready',conn);
 		});
         conn.on('end',function() {
-            //console.log("END!" + conn.id);
             utilEmitter.emit('end',remote,conn);
         });
 	};
     var d = dnode(offer);
 	var self = {};
 	self.connect = function(address) {
-        console.log("self.connect to " + address);
         serverEvents = d.connect(address);
 	};
     self.connectWEB = function() {
@@ -144,21 +142,27 @@ var ez = function(obj) {
 		return self;
 	};
 	self.on = function(name, fn) {
+        //console.log("SELF.ON " + name);
 		if (reservedEvents.indexOf(name) == -1) {
+            //console.log("ladoing up emitter on " + name);
 			emitter.on(name,fn);
 		} else {
+            //console.log("Loading up utilEmitter on " + name);
 			utilEmitter.on(name,fn);
 		}
 	};
-	self.utilEmitter = function() {
-		return utilEmitter;
-	};
+    // this is actually close all, and for servers only (i.e. instantiated for .listen)
     self.close = function() {
         serverEvents.close();
         Object.keys(clients).forEach(function(key) {
             clients[key].end();
         });
     };    
+    self.closeByConnectionId = function(id) {
+        //console.log("Closed " + id);
+        clients[id].end();
+        return id;
+    };
 	return self;
 };
 exports = module.exports = ez;
