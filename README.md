@@ -54,6 +54,27 @@ Bi-Directional
 Dnode-ez is fully bidirectional with both events being able to be bound on either side, and event primitives being able to be 
 fired from either side as well. 
 
+Web Too
+=======
+
+Dnode-ez supports web browsers in the same fashion.
+Use 
+
+    server.listenWEB(12345);
+    // instead of
+    server.listen(12345);
+
+and 
+
+    client.connectWEB();
+    // instead of 
+    client.connect(12345);
+
+Also for the web code, put your code into some file, say, entry.js, and run
+
+    browserify entry.js -o bundle.js
+
+
 
 Tests
 =====
