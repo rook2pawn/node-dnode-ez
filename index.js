@@ -78,6 +78,10 @@ var ez = function(obj) {
 	var self = {};
 	self.connect = function(address) {
         serverEvents = d.connect(address);
+        serverEvents.on('remote',function(remote,conn) {
+            utilEmitter.emit('connectionready');
+            utilEmitter.emit('connect',remote,conn);    
+        });
 	};
     self.connectWEB = function() {
         var stream = shoe('/dnode');

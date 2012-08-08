@@ -1,3 +1,5 @@
+// test for basic connection functionality.
+
 var ez = require('../index');
 var test = require('tap').test;
 test('connect',function(t) {
