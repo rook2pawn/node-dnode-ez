@@ -86,6 +86,12 @@ var ez = function(obj) {
             clients[conn.id].expectedBinds = binds;
             clients[conn.id].bindsMade = 0;
         };
+        this.emit = function() {
+            var args = [].slice.call(arguments,0);
+            args.push(remote);
+            args.push(conn);
+            emitter.emit.apply(emitter,args); 
+        };
 		conn.on('ready',function() {
 			utilEmitter.emit('connectionready',conn);
 		});
