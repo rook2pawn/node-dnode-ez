@@ -9,16 +9,34 @@ var ez = function(obj) {
         var args = [].slice.call(arguments,0);
         remote.emitter.apply(remote.emitter,args);
     });
-    utilEmitter.on('subscribe',function() {
+    // this subscribes all the current clients to an existing server Event so clients
+    // can fire onto the server ...
+    // i.e. CustomerHelpNeeded "Help I can't login" (clients can fire upon the server)
+    utilEmitter.on('subscribeClient',function(emitter,name,connid) {
         var args = [].slice.call(arguments,0);
         var emitter = args[0];
         var name = args[1];
-        remote.subscribe(emitter.emit.bind(emitter),emitter,name);
+        clients[connid].remote.subscribe(emitter.emit.bind(emitter),emitter,name);
+    });
+    // this subscribes the server to an existing client Event so the server
+    // can fire onto the client
+    // i.e. SystemMessages aka "the system is shutting down in 5 minutes"  (server can fire upon the client)
+    utilEmitter.on('subscribe',function(emitter,name) {
+        var args = [].slice.call(arguments,0);
+        var emitter = args[0];
+        var name = args[1];
+        if (myRemote !== undefined) {
+            // then this is a server subscribing to a client side event.
+            myRemote.subscribe(emitter.emit.bind(emitter),emitter,name);
+        } 
     });
     utilEmitter.on('connect',function(remote,conn) {
         //anything bookeepingish here  
         //console.log("connid connect:" + conn.id);
-        clients[conn.id] = conn;
+        if (clients[conn.id] === undefined) {
+            clients[conn.id] = {};
+        }
+        clients[conn.id].conn = conn;
     });
     var subscriptionsById = {};
     var subscriptionsByName = {};
@@ -32,6 +50,7 @@ var ez = function(obj) {
     var bindsMade = 0;
     var serverEvents = undefined;
     var clients = {};
+    var myRemote = undefined;
 
 	var offer = function(remote,conn) {
         if (obj !== undefined) {
@@ -79,6 +98,7 @@ var ez = function(obj) {
 	self.connect = function(address) {
         serverEvents = d.connect(address);
         serverEvents.on('remote',function(remote,conn) {
+            myRemote = remote;
             utilEmitter.emit('connectionready');
             utilEmitter.emit('connect',remote,conn);    
         });
@@ -87,6 +107,7 @@ var ez = function(obj) {
         var stream = shoe('/dnode');
         serverEvents = d.pipe(stream).pipe(d); 
         serverEvents.on('remote',function(remote,conn) {
+            myRemote = remote;
             utilEmitter.emit('connectionready');
             utilEmitter.emit('connect',remote,conn);    
         });
@@ -95,6 +116,10 @@ var ez = function(obj) {
         var params = parseArgs(arguments);
         serverEvents = d.listen(params);
         serverEvents.on('remote',function(remote,conn) {
+            if (clients[conn.id] === undefined) {
+                clients[conn.id] = {};
+            }
+            clients[conn.id].remote = remote;
             utilEmitter.emit('connectionready');
             utilEmitter.emit('connect',remote,conn);    
         });
@@ -104,6 +129,10 @@ var ez = function(obj) {
         var sock = shoe(function (stream) {
             serverEvents = d.pipe(stream).pipe(d);
             serverEvents.on('remote',function(remote,conn) {
+                if (clients[conn.id] === undefined) {
+                    clients[conn.id] = {};
+                }
+                clients[conn.id].remote = remote;
                 utilEmitter.emit('connectionready');
                 utilEmitter.emit('connect',remote,conn);    
             });
@@ -145,6 +174,22 @@ var ez = function(obj) {
         });
 		return self;
 	};
+	self.bindToClients = function(emitter,name) {
+		var args = [].slice.call(arguments,0); 
+        args.shift();
+        args.forEach(function(name) {
+            if (connectionReady) {
+                Object.keys(clients).forEach(function(connid) {
+                    utilEmitter.emit('subscribeClient', emitter,name,connid);
+                });
+            } else {
+                setTimeout(function() {
+                    self.bindToClients.apply(self.bindToClients,[emitter,name]);
+                }, 250);
+            } 
+        });
+		return self;
+	};
 	self.on = function(name, fn) {
         //console.log("SELF.ON " + name);
 		if (reservedEvents.indexOf(name) == -1) {
@@ -159,12 +204,12 @@ var ez = function(obj) {
     self.close = function() {
         serverEvents.close();
         Object.keys(clients).forEach(function(key) {
-            clients[key].end();
+            clients[key].conn.end();
         });
     };    
     self.closeByConnectionId = function(id) {
         //console.log("Closed " + id);
-        clients[id].end();
+        clients[id].conn.end();
         return id;
     };
 	return self;
