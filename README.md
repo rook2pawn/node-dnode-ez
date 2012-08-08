@@ -1,7 +1,8 @@
 dnode-ez
 ========
 
-Dnode-ez allows you to create events both client and server side, and fire them from either side.
+[Dnode-EZ](https://github.com/rook2pawn/node-dnode-ez) allows you to create events both client and server side, and fire them from either side.
+This module transforms and inverts control of [Dnode](https://github.com/substack/dnode).
 
 Short Example
 =============
