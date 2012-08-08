@@ -9,9 +9,14 @@ Short Example
     
     // server
     var server = ez();
-    server.on('bind',function(name,remote,conn) {
+    server.on('bind',function(name,remote,conn,emitter) {
+        
         var myEmitter = server.getEmitter(name);
         myEmitter.emit('bar', 24);
+
+        // or you can do the following 
+
+        emitter.emit('bar', 24);
     }); 
     server.listen(12345);
 

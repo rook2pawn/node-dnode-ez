@@ -80,7 +80,7 @@ var ez = function(obj) {
 			};
 			subscriptionsById[conn.id] = subObj;
 			subscriptionsByName[id] = subObj;
-			utilEmitter.emit('bind',id,remote,conn);
+			utilEmitter.emit('bind',id,remote,conn,emitter);
 		};	
         this.expectedBinds = function(binds) {
             clients[conn.id].expectedBinds = binds;
