@@ -53,6 +53,14 @@ Dnode-ez allows for simple event handling as well, similar to Socket.io.
     });
     client.connect(12345);
 
+You can also do direct emits on the client/server object itself.
+
+    client.emit('foo', 42);
+    
+    // or
+
+    server.emit('msg', 'the system is shutting down');
+
 
 Bi-Directional
 ==============

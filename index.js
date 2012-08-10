@@ -2,12 +2,31 @@ var dnode = require('dnode');
 var shoe = require('shoe');
 var parseArgs = require('./node_modules/dnode/lib/parse_args');
 var EE = require('events').EventEmitter;
+function randomId () {
+    var s = '';
+    for (var i = 0; i < 4; i++) {
+        s += Math.random().toString(16).slice(2);
+    }
+    return s;
+}
 var ez = function(obj) {
     var emitter = new EE;
     var utilEmitter = new EE;
     utilEmitter.on('emit',function() {
         var args = [].slice.call(arguments,0);
-        remote.emitter.apply(remote.emitter,args);
+        // myRemote is assigned if this is the scenario
+        // client connects, then the SERVER is assigned myRemote
+        // hence if myRemote is undefined, then we are assuming
+        // a server is emitting, and thus it applies to all clients
+        // i.e. server.emit('msg', "the system is shutting down");
+        if (myRemote !== undefined) {
+            myRemote.emitter.apply(myRemote.emitter,args);
+        } else {
+            Object.keys(clients).forEach(function(connid) {
+                var rem = clients[connid].remote;
+                rem.emitter.apply(rem.emitter, args);    
+            });
+        }
     });
     // this subscribes all the current clients to an existing server Event so clients
     // can fire onto the server ...
@@ -111,12 +130,12 @@ var ez = function(obj) {
 	};
     self.connectWEB = function() {
         var stream = shoe('/dnode');
-        serverEvents = d.pipe(stream).pipe(d); 
-        serverEvents.on('remote',function(remote,conn) {
+        d.on('remote',function(remote,conn) {
             myRemote = remote;
             utilEmitter.emit('connectionready');
             utilEmitter.emit('connect',remote,conn);    
         });
+        serverEvents = d.pipe(stream).pipe(d); 
     };
 	self.listen = function(address) {
         var params = parseArgs(arguments);
@@ -133,6 +152,8 @@ var ez = function(obj) {
 	self.listenWEB = function(address,server) {
         server.listen(address);
         var sock = shoe(function (stream) {
+            var d = dnode(offer);
+            d.id = randomId();
             serverEvents = d.pipe(stream).pipe(d);
             serverEvents.on('remote',function(remote,conn) {
                 if (clients[conn.id] === undefined) {
@@ -199,10 +220,10 @@ var ez = function(obj) {
 	self.on = function(name, fn) {
         //console.log("SELF.ON " + name);
 		if (reservedEvents.indexOf(name) == -1) {
-            //console.log("ladoing up emitter on " + name);
+            console.log("loading up emitter on " + name);
 			emitter.on(name,fn);
 		} else {
-            //console.log("Loading up utilEmitter on " + name);
+            console.log("Loading up utilEmitter on " + name);
 			utilEmitter.on(name,fn);
 		}
 	};
