@@ -30,7 +30,7 @@ Short Example
     }); 
     var client = ez();
     client.connect(12345);
-    client.bind(foo,'foo');
+    client.bind(foo,'foo'); // optional descriptive name 'foo' to help sort things out on the server end
 
 
 Event Primitives
