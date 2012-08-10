@@ -14,7 +14,7 @@ test('testClientEvent',function(t) {
         msg = newmsg;
         t.equal("The system is down.", newmsg);
         t.end();
-        d.close();
+        d.closeServer();
     });
     var allDone = new EE;
     allDone.on('done',function() {

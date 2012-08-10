@@ -14,7 +14,7 @@ test('connect',function(t) {
     c.on('end',function(remote,conn) {
         numCloses++; 
         t.equal(numCloses, 2);
-        d.close();
+        d.closeServer();
         t.end();
     });
     var e = ez();

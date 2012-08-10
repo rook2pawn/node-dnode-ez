@@ -20,7 +20,7 @@ test('testClientPrimitiveEvent',function(t) {
         console.log("System message:\n"+msg); 
         t.equal(msg,"Hi there, traveller!");
         t.end();
-        d.close();
+        d.closeServer();
     });
 
 });

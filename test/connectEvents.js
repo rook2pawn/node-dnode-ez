@@ -11,7 +11,7 @@ test('connectEvents',function(t) {
     var allDone = new EE;
     allDone.on('done',function() {
         t.equal(1, num);
-        d.close();
+        d.closeServer();
         t.end();
     });
     d.on('connect',function(remote,conn) {

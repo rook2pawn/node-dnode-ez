@@ -6,7 +6,7 @@ test('connect',function(t) {
     t.plan(1);
     var d = ez();
     d.on('connect',function() {
-        d.close();
+        d.closeServer();
         t.ok(true,1);
         t.end();
     });

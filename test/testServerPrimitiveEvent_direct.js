@@ -13,7 +13,7 @@ test('testServerPrimitiveEvent_direct', function(t) {
         console.log(msg);
         t.equal(msg, 'My name is Foo Bar');
         t.end();
-        d.close();
+        d.closeServer();
     });
     var c = ez();
     c.connect(12345);

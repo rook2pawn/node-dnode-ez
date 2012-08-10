@@ -14,7 +14,7 @@ test('testServerEvent',function(t) {
         msg = newmsg;
         t.equal(newmsg, "i can't log in");
         t.end();
-        d.close();
+        d.closeServer();
     });
     var d = ez();
     d.listen(12345);

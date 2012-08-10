@@ -51,7 +51,6 @@ var ez = function(obj) {
     });
     utilEmitter.on('connect',function(remote,conn) {
         //anything bookeepingish here  
-        //console.log("connid connect:" + conn.id);
         if (clients[conn.id] === undefined) {
             clients[conn.id] = {};
         }
@@ -111,11 +110,15 @@ var ez = function(obj) {
             args.push(conn);
             emitter.emit.apply(emitter,args); 
         };
+
 		conn.on('ready',function() {
 			utilEmitter.emit('connectionready',conn);
 		});
+
+        // this happens when a client issues .close
         conn.on('end',function() {
-            utilEmitter.emit('end',remote,conn);
+            delete clients[conn.id];
+            utilEmitter.emit('end',remote,conn,Object.keys(clients));
         });
 	};
     var d = dnode(offer);
@@ -124,6 +127,7 @@ var ez = function(obj) {
         serverEvents = d.connect(address);
         serverEvents.on('remote',function(remote,conn) {
             myRemote = remote;
+            myRemote.conn = conn;
             utilEmitter.emit('connectionready');
             utilEmitter.emit('connect',remote,conn);    
         });
@@ -132,6 +136,7 @@ var ez = function(obj) {
         var stream = shoe('/dnode');
         d.on('remote',function(remote,conn) {
             myRemote = remote;
+            myRemote.conn = conn;
             utilEmitter.emit('connectionready');
             utilEmitter.emit('connect',remote,conn);    
         });
@@ -224,15 +229,18 @@ var ez = function(obj) {
 			utilEmitter.on(name,fn);
 		}
 	};
-    // this is actually close all, and for servers only (i.e. instantiated for .listen)
-    self.close = function() {
+    self.closeServer = function() {
         serverEvents.close();
         Object.keys(clients).forEach(function(key) {
             clients[key].conn.end();
+            delete clients[key];
         });
     };    
+    // this is a client to close connection to its server.
+    self.close = function() {
+        myRemote.conn.end();
+    };
     self.closeByConnectionId = function(id) {
-        //console.log("Closed " + id);
         clients[id].conn.end();
         return id;
     };
