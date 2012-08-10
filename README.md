@@ -9,13 +9,7 @@ Short Example
     
     // server
     var server = ez();
-    server.on('bind',function(name,remote,conn,emitter) {
-        
-        var myEmitter = server.getEmitter(name);
-        myEmitter.emit('bar', 24);
-
-        // or you can do the following 
-
+    server.on('bind',function(emitter) {
         emitter.emit('bar', 24);
     }); 
     server.listen(12345);
@@ -30,7 +24,7 @@ Short Example
     }); 
     var client = ez();
     client.connect(12345);
-    client.bind(foo,'foo'); // optional descriptive name 'foo' to help sort things out on the server end
+    client.bind(foo);
 
 
 Event Primitives

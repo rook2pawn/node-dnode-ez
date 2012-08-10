@@ -85,20 +85,26 @@ var ez = function(obj) {
             args.push(conn);
 			emitter.emit.apply(emitter,args);
 		}
+        //just realized. subscriptionsByName doesnt work
+        //for more than one client, as it would overwrite
+        //names that are the same. 
+            /// also the way it looks, that there can't be
+        // more than one emitter stored per connection 
+        // ATTENTION ASAP
 		this.subscribe = function(emitter,emitterObj,id) {
+/*
 			if (subscriptionsById[conn.id] === undefined) 
 				subscriptionsById[conn.id] = {};
 			if (subscriptionsByName[id] === undefined)
 				subscriptionsByName[id] = {};
+*/
 			var subObj = {
 				id:id,
 				emitter:emitter,
 				events:Object.keys(emitterObj._events),
 				emit:emitter
 			};
-			subscriptionsById[conn.id] = subObj;
-			subscriptionsByName[id] = subObj;
-			utilEmitter.emit('bind',id,remote,conn,emitter);
+			utilEmitter.emit('bind',subObj,name,remote,conn);
 		};	
         this.expectedBinds = function(binds) {
             clients[conn.id].expectedBinds = binds;
@@ -171,15 +177,6 @@ var ez = function(obj) {
         });
         sock.install(server, '/dnode');
 	};
-    self.getEmitterByConnId = function(id,name) {
-        if (subscriptionsById[id] !== undefined) {
-            return subscriptionsById[id];
-        };
-    };
-	self.getEmitter = function(name) {
-		if (subscriptionsByName[name] !== undefined)
-			return subscriptionsByName[name];
-	};
 	self.emit = function() {
 		var args = [].slice.call(arguments,0);
 		if (connectionReady) {
@@ -193,33 +190,25 @@ var ez = function(obj) {
 		return self;
 	}
 	self.bind = function(emitter,name) {
-		var args = [].slice.call(arguments,0); 
-        args.shift();
-        args.forEach(function(name) {
-            if (connectionReady) {
-                utilEmitter.emit('subscribe', emitter,name);
-            } else {
-                setTimeout(function() {
-                    self.bind.apply(self.bind,[emitter,name]);
-                }, 250);
-            } 
-        });
+        if (connectionReady) {
+            utilEmitter.emit('subscribe', emitter,name);
+        } else {
+            setTimeout(function() {
+                self.bind.apply(self.bind,[emitter,name]);
+            }, 250);
+        } 
 		return self;
 	};
 	self.bindToClients = function(emitter,name) {
-		var args = [].slice.call(arguments,0); 
-        args.shift();
-        args.forEach(function(name) {
-            if (connectionReady) {
-                Object.keys(clients).forEach(function(connid) {
-                    utilEmitter.emit('subscribeClient', emitter,name,connid);
-                });
-            } else {
-                setTimeout(function() {
-                    self.bindToClients.apply(self.bindToClients,[emitter,name]);
-                }, 250);
-            } 
-        });
+        if (connectionReady) {
+            Object.keys(clients).forEach(function(connid) {
+                utilEmitter.emit('subscribeClient', emitter,name,connid);
+            });
+        } else {
+            setTimeout(function() {
+                self.bindToClients.apply(self.bindToClients,[emitter,name]);
+            }, 250);
+        } 
 		return self;
 	};
 	self.on = function(name, fn) {

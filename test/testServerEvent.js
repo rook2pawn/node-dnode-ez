@@ -6,12 +6,9 @@ var EE = require('events').EventEmitter;
 
 test('testServerEvent',function(t) {
     t.plan(1);
-    var msg = "";
-    var serverEventHash = {};
     var serverSideEvent = new EE;
     serverSideEvent.on('customerHelpNeeded',function(newmsg) {
         console.log("customer help needed!!!!\n" + newmsg);
-        msg = newmsg;
         t.equal(newmsg, "i can't log in");
         t.end();
         d.closeServer();
@@ -19,14 +16,11 @@ test('testServerEvent',function(t) {
     var d = ez();
     d.listen(12345);
     d.on('connect',function() {
-        d.bindToClients(serverSideEvent,'serverEvents'); 
+        d.bindToClients(serverSideEvent); 
     });
-
     var c = ez();
     c.connect(12345);
-    c.on('bind', function(name) {
-        serverEventHash[name] = {};
-        serverEventHash[name].emitter = c.getEmitter(name); 
-        serverEventHash[name].emitter.emit('customerHelpNeeded',"i can't log in");
+    c.on('bind', function(emitter) {
+        emitter.emit('customerHelpNeeded',"i can't log in");
     });
 });
