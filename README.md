@@ -130,6 +130,4 @@ If it complains that tap is not found, make sure tap is installed in a sibling d
 TODO
 ====
 
-UtilEmitter.on('end') for cleanup steps on clients[conn.id] object
-Tests for the disconnect cleanup steps
-
+All issues currently resolved.
