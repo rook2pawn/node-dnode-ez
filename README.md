@@ -94,11 +94,11 @@ Summary
 And bind/attach this event to either side and that side can than emit onto that event
     
     // on the client 
-    client.bind(foo,'foo');
+    client.bind(foo,'foo'); //  notice we can describe foo as 'foo' with the second argument
 
     // on the server
     var foo = undefined;
-    server.on('bind', function(name, remote, conn, emitter) {
+    server.on('bind', function(emitter, name, remote, conn) { // if we used a description, it will show up here as 'foo'
         foo = emitter;
     }); 
     // some time later
