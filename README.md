@@ -91,7 +91,7 @@ Also for the web code, put your code into some file, say, entry.js, and run
 Summary
 =======
 
-(1)You can create an event
+(1) You can create an event
 
     var ee = require('events').EventEmitter;
     var foo = new ee;
@@ -105,14 +105,15 @@ And bind/attach this event to either side and that side can than emit onto that 
     // on the server
     var foo = undefined;
     server.on('bind', function(name, remote, conn, emitter) {
-        emitter.emit('hello', 'Welcome!');
-    });
-
+        foo = emitter;
+    }); 
+    // some time later
+    foo.emit('hello', 'Welcome!');
 
     // results in
     // system hello: Welcome!
 
-(2)You can directly emit to the client/server i.e.
+(2) You can directly emit to the client/server i.e.
 
     client.emit('bar', arg1, ...)
     
