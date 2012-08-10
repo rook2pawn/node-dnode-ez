@@ -218,12 +218,9 @@ var ez = function(obj) {
 		return self;
 	};
 	self.on = function(name, fn) {
-        //console.log("SELF.ON " + name);
 		if (reservedEvents.indexOf(name) == -1) {
-            console.log("loading up emitter on " + name);
 			emitter.on(name,fn);
 		} else {
-            console.log("Loading up utilEmitter on " + name);
 			utilEmitter.on(name,fn);
 		}
 	};
