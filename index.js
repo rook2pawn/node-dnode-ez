@@ -104,7 +104,7 @@ var ez = function(obj) {
 				events:Object.keys(emitterObj._events),
 				emit:emitter
 			};
-			utilEmitter.emit('bind',subObj,name,remote,conn);
+			utilEmitter.emit('bind',subObj,id,remote,conn);
 		};	
         this.expectedBinds = function(binds) {
             clients[conn.id].expectedBinds = binds;
