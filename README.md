@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/rook2pawn/node-dnode-ez.png)](http://travis-ci.org/rook2pawn/node-dnode-ez)
 dnode-ez
 ========
 
