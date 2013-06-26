@@ -1,0 +1,29 @@
+{
+  "author": "David Wee <rook2pawn@gmail.com> (http://rook2pawn.com)",
+  "name": "dnode-ez",
+  "description": "dnode made even easier!",
+  "version": "0.1.0",
+  "homepage": "https://github.com/rook2pawn/node-dnode-ez",
+  "keywords" : [
+    "message passing",
+    "rpc",
+    "rmi",
+    "drb",
+    "remote",
+    "communication",
+    "websockets",
+    "socket.io"
+   ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/rook2pawn/node-dnode-ez.git"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "dnode" : "1.0.5",
+    "shoe" : "",
+    "emit-stream" : "",
+    "mux-demux" : "3.7.3"
+  },
+  "devDependencies": {}
+}
