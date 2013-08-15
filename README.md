@@ -13,7 +13,6 @@ client
     var dz = require('dnode-ez');
     var client = new dz;
     client.route('foo',foo);
-    client.type = 'client';
     client.connect(5004);
     client.on('connect',function(remote,conn) {
         foo.emit("bar","The quick brown fox.",function(msg) {
@@ -32,5 +31,11 @@ server
         console.log("The message is  "+ msg);
         cb("All done here");
     });
-    server.type = 'server';
     server.listen(5004);
+
+    1. node server
+    2. node client
+    3. // client will connect, and fire "bar" on event foo
+    4. // on server "bar" will trigger "The message is .."
+    5. // and the callback will be called with "All done here"
+    6. // on client that callback will be done,i.e. console.log("All done here")
