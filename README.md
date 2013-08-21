@@ -39,3 +39,9 @@ server
     4. // on server "bar" will trigger "The message is .."
     5. // and the callback will be called with "All done here"
     6. // on client that callback will be done,i.e. console.log("All done here")
+
+
+node-dnode-ez Copyright (c) 2010 David Wee rook2pawn@gmail.com
+
+Free software provided under the MIT License
+http://opensource.org/licenses/mit-license.php
