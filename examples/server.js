@@ -7,5 +7,4 @@ foo.on('bar',function(msg,cb) {
     console.log("The message is  "+ msg);
     cb("All done here");
 });
-server.type = 'server';
 server.listen(5004);

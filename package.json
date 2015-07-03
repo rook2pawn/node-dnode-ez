@@ -1,10 +1,10 @@
 {
   "author": "David Wee <rook2pawn@gmail.com> (http://rook2pawn.com)",
   "name": "dnode-ez",
-  "description": "dnode made even easier!",
-  "version": "0.2.0",
+  "description": "connect event emitters via dnode",
+  "version": "0.2.1",
   "homepage": "https://github.com/rook2pawn/node-dnode-ez",
-  "keywords" : [
+  "keywords": [
     "message passing",
     "rpc",
     "rmi",
@@ -13,14 +13,14 @@
     "communication",
     "websockets",
     "socket.io"
-   ],
+  ],
   "repository": {
     "type": "git",
     "url": "git://github.com/rook2pawn/node-dnode-ez.git"
   },
   "main": "index.js",
   "dependencies": {
-    "dnode" : "1.0.5"
+    "dnode": "^1.2.1"
   },
   "devDependencies": {}
 }

@@ -1,7 +1,6 @@
 var dnode = require('dnode');
 var util = require('util');
 var ee = require('events').EventEmitter;
-
 var ez = function() {
     var send = function() {
         var arglist = [].slice.call(arguments);
@@ -10,7 +9,7 @@ var ez = function() {
     var offer = {
         send : send.bind(this)
     };
-    this.type = '';
+    this.type;
     this.clients = {};
     this.dz = dnode(offer);
     var remote = function(remote,conn) {
@@ -66,6 +65,7 @@ var ez = function() {
     };
     this.listenobj = undefined;
     this.listen = function(port) {
+        this.type = 'server'
         this.listenobj = this.dz.listen(port);
         var remote = function(remote,conn) {
             this.emit('connect');
@@ -74,6 +74,7 @@ var ez = function() {
         this.listenobj.on('remote',remote.bind(this));
     };
     this.connect = function(port) {
+        this.type = 'client'
         this.dz.connect(port,function(remote,conn) {
         });
     };
